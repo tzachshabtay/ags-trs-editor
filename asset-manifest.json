@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/ags-trs-editor/static/css/main.7f527e1e.chunk.css",
+    "main.js": "/ags-trs-editor/static/js/main.059556ae.chunk.js",
+    "main.js.map": "/ags-trs-editor/static/js/main.059556ae.chunk.js.map",
+    "runtime-main.js": "/ags-trs-editor/static/js/runtime-main.ca227238.js",
+    "runtime-main.js.map": "/ags-trs-editor/static/js/runtime-main.ca227238.js.map",
+    "static/js/2.cf86c82d.chunk.js": "/ags-trs-editor/static/js/2.cf86c82d.chunk.js",
+    "static/js/2.cf86c82d.chunk.js.map": "/ags-trs-editor/static/js/2.cf86c82d.chunk.js.map",
+    "index.html": "/ags-trs-editor/index.html",
+    "precache-manifest.6a69d65b3f0205881f370aaf1d377046.js": "/ags-trs-editor/precache-manifest.6a69d65b3f0205881f370aaf1d377046.js",
+    "service-worker.js": "/ags-trs-editor/service-worker.js",
+    "static/css/main.7f527e1e.chunk.css.map": "/ags-trs-editor/static/css/main.7f527e1e.chunk.css.map",
+    "static/js/2.cf86c82d.chunk.js.LICENSE": "/ags-trs-editor/static/js/2.cf86c82d.chunk.js.LICENSE"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.ca227238.js",
+    "static/js/2.cf86c82d.chunk.js",
+    "static/css/main.7f527e1e.chunk.css",
+    "static/js/main.059556ae.chunk.js"
+  ]
+}
