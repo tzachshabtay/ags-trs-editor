@@ -125,7 +125,7 @@ export default class AGSToolbar extends React.Component {
     render() {
         return (
             <>
-                <AppBar position="static">
+                <AppBar position="fixed">
                     <Toolbar>
                         <Typography variant="h6" style={{ paddingRight: 50 }}>
                             AGS TRS Editor
