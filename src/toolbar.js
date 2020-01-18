@@ -33,9 +33,16 @@ export default class AGSToolbar extends React.Component {
         setTimeout(this.trackProgress, 500);
     }
 
+    getTo = (line) => {
+        const to = this.context.lines[line.index];
+        if (to === undefined) {
+            return line.to;
+        }
+        return to;
+    }
+
     isMissing = (line) => {
-        if (line.ref) return !line.ref.state.to;
-        return !line.to;
+        return !this.getTo(line);
     }
 
     trackProgress = () => {
@@ -121,9 +128,9 @@ export default class AGSToolbar extends React.Component {
     }
 
     genFile = () => {
-        let text = "";
+        let text = `${this.props.comments}\r\n`;
         for (const line of this.props.lines) {
-            text += `${line.from}\r\n${line.ref.state.to || ""}\r\n`;
+            text += `${line.from}\r\n${this.getTo(line) || ""}\r\n`;
         }
         this.download(text);
     }

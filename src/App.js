@@ -11,7 +11,7 @@ class App extends React.Component {
     return (
       <AppContext.Provider value={{}}>
         <div className="App" style={{ height: "100%" }}>
-          <AGSToolbar lines={this.state && this.state.lines} upload={this.startUpload} loading={this.state && this.state.loading} />
+          <AGSToolbar lines={this.state && this.state.lines} comments={this.state && this.state.comments} upload={this.startUpload} loading={this.state && this.state.loading} />
           {this.state && this.state.lines && <File lines={this.state.lines} comments={this.state.comments} />}
           {(!this.state || !this.state.lines) && <Typography style={{ paddingTop: 100, paddingLeft: 50 }}>Please load a TRS file.</Typography>}
         </div>
@@ -53,6 +53,7 @@ class App extends React.Component {
     let from = null;
     let to = null;
     let comments = "";
+    let index = 0;
     for (const line of lines) {
       if (line.startsWith("//")) {
         comments = `${comments}\r\n${line}`;
@@ -61,13 +62,15 @@ class App extends React.Component {
       } else if (to === null) {
         to = line;
       } else {
-        result.push({ from, to });
+        result.push({ from, to, index });
+        index += 1;
         from = line;
         to = null;
       }
     }
     if (from) {
-      result.push({ from, to });
+      result.push({ from, to, index });
+      index += 1;
     }
     this.setState({ lines: result, comments });
   }

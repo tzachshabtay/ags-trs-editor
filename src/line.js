@@ -1,10 +1,17 @@
 import React from 'react';
 import TextField from '@material-ui/core/TextField';
+import { AppContext } from './context';
 
 export default class Line extends React.Component {
+    static contextType = AppContext;
+
     constructor(props) {
         super(props);
         this.state = { to: props.to };
+    }
+
+    componentDidMount() {
+        this.context.lines[this.props.index] = this.state.to;
     }
 
     IsFocused() {
@@ -18,6 +25,7 @@ export default class Line extends React.Component {
     }
 
     onLineChanged = (e) => {
+        this.context.lines[this.props.index] = e.target.value;
         this.setState({ to: e.target.value });
     }
 

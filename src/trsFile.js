@@ -8,6 +8,10 @@ export default class File extends React.Component {
     static contextType = AppContext;
     focused = { input: null };
 
+    componentDidMount() {
+        this.context.lines = new Array(this.props.lines.length);
+    }
+
     render() {
         return (
             <div style={{ paddingLeft: 10, paddingTop: 60, paddingBottom: 10, height: "100%", flexGrow: 1 }} >
@@ -36,7 +40,7 @@ export default class File extends React.Component {
         const l = this.props.lines[index];
         return (
             <div key={key} style={style}>
-                <Line from={l.from} to={l.to} focused={this.focused} ref={line => { if (line) l.ref = line; }}></Line>
+                <Line from={l.from} to={l.to} index={index} focused={this.focused} ref={line => { if (line) l.ref = line; }}></Line>
             </div>
         );
     }
