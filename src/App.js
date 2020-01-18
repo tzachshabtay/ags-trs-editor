@@ -9,7 +9,7 @@ class App extends React.Component {
     return (
       <div className="App">
         <AGSToolbar lines={this.state && this.state.lines} upload={this.upload} />
-        {this.state && <File lines={this.state.lines} />}
+        {this.state && <File lines={this.state.lines} comments={this.state.comments} />}
       </div>
     );
   }
@@ -41,42 +41,26 @@ class App extends React.Component {
   onUploaded = (contents) => {
     const lines = contents.replace(/\r/g, "").split("\n");
     let result = [];
-    let from = "";
-    let to = "";
-    let last = "";
+    let from = null;
+    let to = null;
+    let comments = "";
     for (const line of lines) {
-      if (line.startsWith("&")) {
-        if (to) {
-          result.push({ from, to });
-          from = line;
-          last = line.substring(1, line.indexOf(" "));
-          to = "";
-        } else if (from) {
-          let num = line.substring(1, line.indexOf(" "));
-          if (num !== last) {
-            last = num;
-            result.push({ from, to });
-            from = line;
-            to = "";
-          } else {
-            to = line;
-          }
-        } else {
-          from = line;
-          last = line.substring(1, line.indexOf(" "));
-        }
+      if (line.startsWith("//")) {
+        comments = `${comments}\r\n${line}`;
+      } else if (from === null) {
+        from = line;
+      } else if (to === null) {
+        to = line;
       } else {
-        if (to) {
-          to = `${to}\n${line}`;
-        } else {
-          from = `${from}\n${line}`;
-        }
+        result.push({ from, to });
+        from = line;
+        to = null;
       }
     }
     if (from) {
       result.push({ from, to });
     }
-    this.setState({ lines: result });
+    this.setState({ lines: result, comments });
   }
 }
 
