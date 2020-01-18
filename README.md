@@ -1,3 +1,7 @@
+# AGS TRS Editor
+
+A simple editor for AGS (Adventure Game Studio) translation files.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
