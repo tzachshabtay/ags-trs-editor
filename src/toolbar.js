@@ -14,6 +14,7 @@ import GitHubIcon from '@material-ui/icons/GitHub';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles } from '@material-ui/core/styles';
+import { AppContext } from './context';
 
 const ColorLinearProgress = withStyles({
     colorPrimary: {
@@ -26,16 +27,22 @@ const ColorLinearProgress = withStyles({
 
 
 export default class AGSToolbar extends React.Component {
+    static contextType = AppContext;
 
     componentDidMount() {
         setTimeout(this.trackProgress, 500);
+    }
+
+    isMissing = (line) => {
+        if (line.ref) return !line.ref.state.to;
+        return !line.to;
     }
 
     trackProgress = () => {
         if (this.props.lines) {
             let full = 0;
             for (const line of this.props.lines) {
-                if (line.ref.state.to) full += 1;
+                if (!this.isMissing(line)) full += 1;
             }
             this.setState({ full });
         }
@@ -44,7 +51,7 @@ export default class AGSToolbar extends React.Component {
 
     getFocused = () => {
         for (const [index, line] of this.props.lines.entries()) {
-            if (line.ref.IsFocused()) {
+            if (line.ref && line.ref.IsFocused()) {
                 return index;
             }
         }
@@ -75,8 +82,14 @@ export default class AGSToolbar extends React.Component {
         while (true) {
             cursor = (cursor + 1) % this.props.lines.length;
             const line = this.props.lines[cursor];
-            if (!line.ref.state.to || cursor === current) {
-                line.ref.Focus();
+            if (this.isMissing(line) || cursor === current) {
+                if (cursor >= this.props.lines.length - 1) {
+                    cursor = this.props.lines.length - 2;
+                }
+                this.context.list.scrollToRow(cursor + 1);
+                setTimeout(() => {
+                    if (line.ref) line.ref.Focus();
+                }, 100);
                 break;
             }
         }
@@ -94,8 +107,14 @@ export default class AGSToolbar extends React.Component {
                 cursor = this.props.lines.length - 1;
             }
             const line = this.props.lines[cursor];
-            if (!line.ref.state.to || cursor === current) {
-                line.ref.Focus();
+            if (this.isMissing(line) || cursor === current) {
+                if (cursor <= 0) {
+                    cursor = 1;
+                }
+                this.context.list.scrollToRow(cursor - 1);
+                setTimeout(() => {
+                    if (line.ref) line.ref.Focus();
+                }, 100);
                 break;
             }
         }
@@ -174,8 +193,8 @@ export default class AGSToolbar extends React.Component {
                             </IconButton>
                         </Tooltip >
                     </Toolbar >
+                    {this.renderProgress()}
                 </AppBar >
-                {this.renderProgress()}
             </>
         )
     }

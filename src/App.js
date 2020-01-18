@@ -2,15 +2,20 @@ import React from 'react';
 import './App.css';
 import File from './trsFile';
 import AGSToolbar from './toolbar';
+import Typography from '@material-ui/core/Typography';
+import { AppContext } from './context';
 
 class App extends React.Component {
 
   render() {
     return (
-      <div className="App">
-        <AGSToolbar lines={this.state && this.state.lines} upload={this.startUpload} loading={this.state && this.state.loading} />
-        {this.state && this.state.lines && <File lines={this.state.lines} comments={this.state.comments} />}
-      </div>
+      <AppContext.Provider value={{}}>
+        <div className="App" style={{ height: "100%" }}>
+          <AGSToolbar lines={this.state && this.state.lines} upload={this.startUpload} loading={this.state && this.state.loading} />
+          {this.state && this.state.lines && <File lines={this.state.lines} comments={this.state.comments} />}
+          {(!this.state || !this.state.lines) && <Typography style={{ paddingTop: 100, paddingLeft: 50 }}>Please load a TRS file.</Typography>}
+        </div>
+      </AppContext.Provider>
     );
   }
 
