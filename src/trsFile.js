@@ -8,10 +8,6 @@ export default class File extends React.Component {
     static contextType = AppContext;
     focused = { input: null };
 
-    componentDidMount() {
-        this.context.lines = new Array(this.props.lines.length);
-    }
-
     render() {
         return (
             <div style={{ paddingLeft: 10, paddingTop: 60, paddingBottom: 10, height: "100%", flexGrow: 1 }} >

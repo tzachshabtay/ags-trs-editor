@@ -5,17 +5,25 @@ import AGSToolbar from './toolbar';
 import Typography from '@material-ui/core/Typography';
 import { AppContext } from './context';
 
-class App extends React.Component {
-
+class AppContainer extends React.Component {
   render() {
     return (
       <AppContext.Provider value={{}}>
-        <div className="App" style={{ height: "100%" }}>
-          <AGSToolbar lines={this.state && this.state.lines} comments={this.state && this.state.comments} upload={this.startUpload} loading={this.state && this.state.loading} />
-          {this.state && this.state.lines && <File lines={this.state.lines} comments={this.state.comments} />}
-          {(!this.state || !this.state.lines) && <Typography style={{ paddingTop: 100, paddingLeft: 50 }}>Please load a TRS file.</Typography>}
-        </div>
+        <App />
       </AppContext.Provider>
+    );
+  }
+}
+
+class App extends React.Component {
+  static contextType = AppContext;
+  render() {
+    return (
+      <div className="App" style={{ height: "100%" }}>
+        <AGSToolbar lines={this.state && this.state.lines} comments={this.state && this.state.comments} upload={this.startUpload} loading={this.state && this.state.loading} />
+        {this.state && this.state.lines && <File lines={this.state.lines} comments={this.state.comments} />}
+        {(!this.state || !this.state.lines) && <Typography style={{ paddingTop: 100, paddingLeft: 50 }}>Please load a TRS file.</Typography>}
+      </div>
     );
   }
 
@@ -72,8 +80,17 @@ class App extends React.Component {
       result.push({ from, to, index });
       index += 1;
     }
-    this.setState({ lines: result, comments });
+    this.context.lines = new Array(result.length);
+    this.setState({ lines: result, comments }, () => {
+      if (this.context.list) {
+        setTimeout(() => {
+          this.context.list.forceUpdateGrid();
+          this.context.list.forceUpdate();
+          this.context.list.scrollToRow(0);
+        }, 500);
+      }
+    });
   }
 }
 
-export default App;
+export default AppContainer;
