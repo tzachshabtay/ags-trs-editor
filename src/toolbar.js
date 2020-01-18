@@ -12,6 +12,7 @@ import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles } from '@material-ui/core/styles';
 
 const ColorLinearProgress = withStyles({
@@ -165,6 +166,7 @@ export default class AGSToolbar extends React.Component {
                                 </Tooltip >
                             </>
                         )}
+                        {this.props.loading && (<CircularProgress />)}
                         <div style={{ flexGrow: 1 }} />
                         <Tooltip title="Source Code" aria-label="source code">
                             <IconButton color="inherit" target="_blank" href="https://github.com/tzachshabtay/ags-trs-editor/">

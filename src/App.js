@@ -8,10 +8,14 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <AGSToolbar lines={this.state && this.state.lines} upload={this.upload} />
-        {this.state && <File lines={this.state.lines} comments={this.state.comments} />}
+        <AGSToolbar lines={this.state && this.state.lines} upload={this.startUpload} loading={this.state && this.state.loading} />
+        {this.state && this.state.lines && <File lines={this.state.lines} comments={this.state.comments} />}
       </div>
     );
+  }
+
+  startUpload = () => {
+    this.setState({ loading: true }, this.upload);
   }
 
   upload = () => {
