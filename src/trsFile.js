@@ -24,6 +24,7 @@ export default class File extends React.Component {
                             rowHeight={50}
                             rowRenderer={this.rowRenderer}
                             ref={(ref) => { if (ref) this.context.list = ref; }}
+                            style={{ paddingBottom: 10 }}
                         />
                     )}
                 </AutoSizer>

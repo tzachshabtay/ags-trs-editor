@@ -46,7 +46,7 @@ export default class AGSToolbar extends React.Component {
     }
 
     trackProgress = () => {
-        if (this.props.lines) {
+        if (this.props.lines && this.context.lines) {
             let full = 0;
             for (const line of this.props.lines) {
                 if (!this.isMissing(line)) full += 1;
