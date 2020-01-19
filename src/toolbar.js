@@ -13,6 +13,7 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import SearchBar from 'material-ui-search-bar'
 import { withStyles } from '@material-ui/core/styles';
 import { AppContext } from './context';
 
@@ -29,8 +30,17 @@ const ColorLinearProgress = withStyles({
 export default class AGSToolbar extends React.Component {
     static contextType = AppContext;
 
+    constructor(props) {
+        super(props);
+        this.state = { searchValue: "" };
+    }
+
     componentDidMount() {
         setTimeout(this.trackProgress, 500);
+    }
+
+    getAt = (index) => {
+        return this.props.lines[index];
     }
 
     getTo = (line) => {
@@ -42,7 +52,13 @@ export default class AGSToolbar extends React.Component {
     }
 
     isMissing = (line) => {
+        if (!this.isVisible(line)) return false;
         return !this.getTo(line);
+    }
+
+    isVisible = (line) => {
+        if (!this.context.searchRealToVisual) return true;
+        return line.index in this.context.searchRealToVisual;
     }
 
     trackProgress = () => {
@@ -57,41 +73,31 @@ export default class AGSToolbar extends React.Component {
     }
 
     getFocused = () => {
-        for (const [index, line] of this.props.lines.entries()) {
-            if (line.ref && line.ref.IsFocused()) {
-                return index;
-            }
+        if (this.context.searchRealToVisual) {
+            return this.context.searchRealToVisual[this.context.focused] || -1;
         }
-        return -1;
+        return this.context.focused || -1;
     }
 
-    onNextClicked = () => {
-        const current = this.getFocused();
-        const toFocus = this.props.lines[(current + 1) % this.props.lines.length];
-        toFocus.ref.Focus();
-    }
-
-    onPreviousClicked = () => {
-        let current = this.getFocused();
-        if (current < 1) {
-            current = this.props.lines.length;
-        }
-        const toFocus = this.props.lines[(current - 1) % this.props.lines.length];
-        toFocus.ref.Focus();
-    }
-
-    onNextMissingClicked = () => {
+    findNext = (filter) => {
         let current = this.getFocused();
         if (current < 0) {
             current = 0;
         }
         let cursor = current;
+        let len = this.props.lines.length;
+        if (this.context.searchRealToVisual) {
+            len = Object.keys(this.context.searchRealToVisual).length;
+        }
         while (true) {
-            cursor = (cursor + 1) % this.props.lines.length;
-            const line = this.props.lines[cursor];
-            if (this.isMissing(line) || cursor === current) {
-                if (cursor >= this.props.lines.length - 1) {
-                    cursor = this.props.lines.length - 2;
+            cursor = (cursor + 1) % len;
+            const line = this.getAt(cursor);
+            if (filter(line) || cursor === current) {
+                if (cursor >= len - 1) {
+                    cursor = len - 2;
+                }
+                if (cursor < 0) {
+                    cursor = -1;
                 }
                 this.context.list.scrollToRow(cursor + 1);
                 setTimeout(() => {
@@ -102,7 +108,7 @@ export default class AGSToolbar extends React.Component {
         }
     }
 
-    onPreviousMissingClicked = () => {
+    findPrev = (filter) => {
         let current = this.getFocused();
         if (current < 0) {
             current = this.props.lines.length - 1;
@@ -113,8 +119,8 @@ export default class AGSToolbar extends React.Component {
             if (cursor < 0) {
                 cursor = this.props.lines.length - 1;
             }
-            const line = this.props.lines[cursor];
-            if (this.isMissing(line) || cursor === current) {
+            const line = this.getAt(cursor);
+            if (filter(line) || cursor === current) {
                 if (cursor <= 0) {
                     cursor = 1;
                 }
@@ -125,6 +131,22 @@ export default class AGSToolbar extends React.Component {
                 break;
             }
         }
+    }
+
+    onNextClicked = () => {
+        this.findNext(this.isVisible);
+    }
+
+    onPreviousClicked = () => {
+        this.findPrev(this.isVisible);
+    }
+
+    onNextMissingClicked = () => {
+        this.findNext(this.isMissing);
+    }
+
+    onPreviousMissingClicked = () => {
+        this.findPrev(this.isMissing);
     }
 
     genFile = () => {
@@ -147,6 +169,15 @@ export default class AGSToolbar extends React.Component {
 
     upload = () => {
         this.props.upload();
+    }
+
+    onSearch = (text) => {
+        this.setState({ searchValue: text });
+        setTimeout(() => {
+            if (this.state.searchValue === text) {
+                this.context.onSearch(text);
+            }
+        }, 200);
     }
 
     render() {
@@ -190,6 +221,8 @@ export default class AGSToolbar extends React.Component {
                                         <SkipNextIcon />
                                     </IconButton>
                                 </Tooltip >
+                                <SearchBar value={this.state.searchValue} style={{ paddingLeft: 20 }}
+                                    onChange={this.onSearch} onCancelSearch={() => this.onSearch("")} />
                             </>
                         )}
                         {this.props.loading && (<CircularProgress />)}

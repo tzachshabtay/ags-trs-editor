@@ -15,10 +15,6 @@ export default class Line extends React.Component {
         this.context.lines[this.props.index] = this.state.to;
     }
 
-    IsFocused() {
-        return this.props.focused.input === this;
-    }
-
     Focus() {
         if (this.input) {
             this.input.focus();
@@ -31,7 +27,7 @@ export default class Line extends React.Component {
     }
 
     onFocus = (e) => {
-        this.props.focused.input = this;
+        this.context.focused = this.props.index;
     }
 
     render() {
