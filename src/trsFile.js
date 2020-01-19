@@ -35,9 +35,13 @@ export default class File extends React.Component {
         style, // Style object to be applied to row (to position it)
     }) => {
         const l = this.props.lines[index];
+        let to = this.context.lines[index];
+        if (to === undefined) {
+            to = l.to;
+        }
         return (
             <div key={key} style={style}>
-                <Line from={l.from} to={l.to} index={index} focused={this.focused} ref={line => { if (line) l.ref = line; }}></Line>
+                <Line from={l.from} to={to} index={index} focused={this.focused} ref={line => { if (line) l.ref = line; }}></Line>
             </div>
         );
     }
