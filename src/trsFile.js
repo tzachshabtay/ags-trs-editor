@@ -17,7 +17,7 @@ export default class File extends React.Component {
                             width={width}
                             height={height}
                             rowCount={this.props.lines.length}
-                            rowHeight={50}
+                            rowHeight={80}
                             rowRenderer={this.rowRenderer}
                             ref={(ref) => { if (ref) this.context.list = ref; }}
                             style={{ paddingBottom: 10 }}
