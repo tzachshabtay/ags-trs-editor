@@ -3,6 +3,11 @@ import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import { AppContext } from './context';
 
+const trimStart = (str) => {
+    // NOTE String.trimStart is available on Firefox 61
+    return str.replace(/^\s+/, '');
+};
+
 export default class Line extends React.Component {
     static contextType = AppContext;
 
@@ -36,8 +41,8 @@ export default class Line extends React.Component {
     }
 
     render() {
-        let from = this.props.from.trimStart();
-        let to = this.state.to ? this.state.to.trimStart() : "";
+        let from = trimStart(this.props.from);
+        let to = this.state.to ? trimStart(this.state.to) : "";
         return (<Grid container alignItems="center" direction="row" spacing={0} style={{ marginTop: 5 }}>
             <Grid item xs={1}>
                 <span>{this.props.index + 1}</span>
