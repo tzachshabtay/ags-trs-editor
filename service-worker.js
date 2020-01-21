@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/ags-trs-editor/precache-manifest.5cc3ea441a3c2793700fbb6b84b1c3ce.js"
+  "/ags-trs-editor/precache-manifest.82c04ab292a468ee3b517c0994b4d821.js"
 );
 
 self.addEventListener('message', (event) => {
