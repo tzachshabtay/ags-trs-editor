@@ -40,6 +40,9 @@ export default class AGSToolbar extends React.Component {
     }
 
     getAt = (index) => {
+        if (this.context.searchVisualToReal) {
+            index = this.context.searchVisualToReal[index];
+        }
         return this.props.lines[index];
     }
 
@@ -79,6 +82,12 @@ export default class AGSToolbar extends React.Component {
         return this.context.focused || -1;
     }
 
+    focusLine = (line) => {
+        if (line.index in this.context.focus) {
+            this.context.focus[line.index]();
+        }
+    }
+
     findNext = (filter) => {
         let current = this.getFocused();
         if (current < 0) {
@@ -101,7 +110,7 @@ export default class AGSToolbar extends React.Component {
                 }
                 this.context.list.scrollToRow(cursor + 1);
                 setTimeout(() => {
-                    if (line.ref) line.ref.Focus();
+                    this.focusLine(line);
                 }, 100);
                 break;
             }
@@ -110,14 +119,18 @@ export default class AGSToolbar extends React.Component {
 
     findPrev = (filter) => {
         let current = this.getFocused();
+        let len = this.props.lines.length;
+        if (this.context.searchRealToVisual) {
+            len = Object.keys(this.context.searchRealToVisual).length;
+        }
         if (current < 0) {
-            current = this.props.lines.length - 1;
+            current = len - 1;
         }
         let cursor = current;
         while (true) {
-            cursor = (cursor - 1) % this.props.lines.length;
+            cursor = (cursor - 1) % len;
             if (cursor < 0) {
-                cursor = this.props.lines.length - 1;
+                cursor = len - 1;
             }
             const line = this.getAt(cursor);
             if (filter(line) || cursor === current) {
@@ -126,7 +139,7 @@ export default class AGSToolbar extends React.Component {
                 }
                 this.context.list.scrollToRow(cursor - 1);
                 setTimeout(() => {
-                    if (line.ref) line.ref.Focus();
+                    this.focusLine(line);
                 }, 100);
                 break;
             }

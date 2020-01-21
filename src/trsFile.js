@@ -9,7 +9,7 @@ export default class File extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { search: null };
+        this.state = { search: null, searchText: "" };
     }
 
     render() {
@@ -20,6 +20,7 @@ export default class File extends React.Component {
                 <AutoSizer>
                     {({ height, width }) => (
                         <List
+                            key={this.state.searchText}
                             width={width}
                             height={height}
                             rowCount={count}
@@ -35,7 +36,7 @@ export default class File extends React.Component {
 
     onSearch = (text) => {
         if (!text) {
-            this.setState({ search: null });
+            this.setState({ search: null, searchText: "" });
         } else {
             const searchVisualToReal = {};
             const searchRealToVisual = {};
@@ -49,7 +50,7 @@ export default class File extends React.Component {
             }
             this.context.searchRealToVisual = searchRealToVisual;
             this.context.searchVisualToReal = searchVisualToReal;
-            this.setState({ search: searchVisualToReal });
+            this.setState({ search: searchVisualToReal, searchText: text });
         }
     }
 
@@ -78,7 +79,7 @@ export default class File extends React.Component {
         }
         return (
             <div key={key} style={style}>
-                <Line from={l.from} to={to} index={index} ref={line => { if (line) l.ref = line; }}></Line>
+                <Line from={l.from} to={to} index={index}></Line>
             </div>
         );
     }

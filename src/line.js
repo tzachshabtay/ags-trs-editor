@@ -13,9 +13,14 @@ export default class Line extends React.Component {
 
     componentDidMount() {
         this.context.lines[this.props.index] = this.state.to;
+        this.context.focus[this.props.index] = this.focus;
     }
 
-    Focus() {
+    componentWillUnmount() {
+        this.context.focus[this.props.index] = null;
+    }
+
+    focus = () => {
         if (this.input) {
             this.input.focus();
         }

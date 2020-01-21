@@ -8,7 +8,7 @@ import { AppContext } from './context';
 class AppContainer extends React.Component {
   render() {
     return (
-      <AppContext.Provider value={{}}>
+      <AppContext.Provider value={{ focus: {} }}>
         <App />
       </AppContext.Provider>
     );
