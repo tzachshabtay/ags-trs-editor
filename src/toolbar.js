@@ -14,10 +14,14 @@ import GitHubIcon from '@material-ui/icons/GitHub';
 import InfoIcon from '@material-ui/icons/Info';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import SearchBar from 'material-ui-search-bar'
+import SearchBar from 'material-ui-search-bar';
+import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
+import TextField from '@material-ui/core/TextField';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import TelegramIcon from '@material-ui/icons/Telegram';
 import { withStyles } from '@material-ui/core/styles';
 import { AppContext } from './context';
 
@@ -36,7 +40,7 @@ export default class AGSToolbar extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { searchValue: "", showHelp: false };
+        this.state = { searchValue: "", showHelp: false, showJumpToLine: false, jumpLine: 1 };
     }
 
     componentDidMount() {
@@ -87,7 +91,7 @@ export default class AGSToolbar extends React.Component {
     }
 
     focusLine = (line) => {
-        if (line.index in this.context.focus) {
+        if (line.index in this.context.focus && this.context.focus[line.index]) {
             this.context.focus[line.index]();
         }
     }
@@ -201,6 +205,36 @@ export default class AGSToolbar extends React.Component {
         this.setState({ showHelp: true });
     }
 
+    onJumpToLineClicked = () => {
+        this.setState({ showJumpToLine: true });
+    }
+
+    onJumpToLine = () => {
+        let jumpLine = parseInt(this.state.jumpLine);
+        if (jumpLine >= this.props.lines.length) {
+            jumpLine = this.props.lines.length - 1;
+            this.setState({ jumpLine });
+        } else if (jumpLine < 1) {
+            jumpLine = 1;
+            this.setState({ jumpLine });
+        }
+        const line = this.props.lines[jumpLine];
+        let visualIndex = jumpLine;
+        if (this.context.searchRealToVisual) {
+            while (!(jumpLine in this.context.searchRealToVisual) && jumpLine >= 0) {
+                jumpLine -= 1;
+            }
+            visualIndex = this.context.searchRealToVisual[jumpLine];
+        }
+        if (visualIndex !== 0 && !visualIndex) {
+            return;
+        }
+        this.context.list.scrollToRow(visualIndex + 1);
+        setTimeout(() => {
+            this.focusLine(line);
+        }, 100);
+    }
+
     render() {
         return (
             <>
@@ -242,12 +276,18 @@ export default class AGSToolbar extends React.Component {
                                         <SkipNextIcon />
                                     </IconButton>
                                 </Tooltip >
-                                <SearchBar value={this.state.searchValue} style={{ paddingLeft: 20 }}
-                                    onChange={this.onSearch} onCancelSearch={() => this.onSearch("")} />
+                                <Tooltip title="Jump to line" aria-label="jump to line">
+                                    <IconButton edge="start" color="inherit" style={{ marginLeft: 40 }} onClick={this.onJumpToLineClicked}>
+                                        <TelegramIcon />
+                                    </IconButton>
+                                </Tooltip >
                             </>
                         )}
                         {this.props.loading && (<CircularProgress />)}
                         <div style={{ flexGrow: 1 }} />
+                        {this.props.lines && (
+                            <SearchBar value={this.state.searchValue} style={{ paddingLeft: 20 }}
+                                onChange={this.onSearch} onCancelSearch={() => this.onSearch("")} />)}
                         <Tooltip title="Help" aria-label="help">
                             <IconButton color="inherit" target="_blank" onClick={this.onHelpClicked}>
                                 <InfoIcon />
@@ -262,6 +302,7 @@ export default class AGSToolbar extends React.Component {
                     {this.renderProgress()}
                 </AppBar >
                 {this.renderHelpDialog()}
+                {this.renderJumpToLineDialog()}
             </>
         )
     }
@@ -301,6 +342,46 @@ export default class AGSToolbar extends React.Component {
                         - Special characters such as [ and %%s symbolize things within the game, so should be left in an appropriate place in the message.
                     </Typography>
                 </DialogContent>
-            </Dialog>)
+            </Dialog>);
+    }
+
+    renderJumpToLineDialog() {
+        return (
+            <Dialog
+                open={this.state.showJumpToLine}
+                onClose={() => this.setState({ showJumpToLine: false })}
+                aria-labelledby="jump-dialog-title"
+                aria-describedby="jump-dialog-description"
+            >
+                <DialogTitle id="jump-dialog-title">{"Jump To Line"}</DialogTitle>
+                <DialogContent dividers id="jump-dialog-description">
+                    <Typography gutterBottom>
+                        Select line number to jump:
+                    </Typography>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="lineNumber"
+                        label="Line Number"
+                        type="number"
+                        InputLabelProps={{
+                            shrink: true
+                        }}
+                        inputProps={{ min: "1", step: "1" }}
+                        value={this.state.jumpLine}
+                        onChange={e => this.setState({ jumpLine: e.target.value })}
+                        fullWidth
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => this.setState({ showJumpToLine: false })} color="primary">
+                        Close
+                    </Button>
+                    <Button onClick={this.onJumpToLine} color="primary">
+                        Jump
+                    </Button>
+                </DialogActions>
+
+            </Dialog>);
     }
 }
