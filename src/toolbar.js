@@ -11,9 +11,13 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import GitHubIcon from '@material-ui/icons/GitHub';
+import InfoIcon from '@material-ui/icons/Info';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import SearchBar from 'material-ui-search-bar'
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import { withStyles } from '@material-ui/core/styles';
 import { AppContext } from './context';
 
@@ -32,7 +36,7 @@ export default class AGSToolbar extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { searchValue: "" };
+        this.state = { searchValue: "", showHelp: false };
     }
 
     componentDidMount() {
@@ -193,6 +197,10 @@ export default class AGSToolbar extends React.Component {
         }, 200);
     }
 
+    onHelpClicked = () => {
+        this.setState({ showHelp: true });
+    }
+
     render() {
         return (
             <>
@@ -240,6 +248,11 @@ export default class AGSToolbar extends React.Component {
                         )}
                         {this.props.loading && (<CircularProgress />)}
                         <div style={{ flexGrow: 1 }} />
+                        <Tooltip title="Help" aria-label="help">
+                            <IconButton color="inherit" target="_blank" onClick={this.onHelpClicked}>
+                                <InfoIcon />
+                            </IconButton>
+                        </Tooltip >
                         <Tooltip title="Source Code" aria-label="source code">
                             <IconButton color="inherit" target="_blank" href="https://github.com/tzachshabtay/ags-trs-editor/">
                                 <GitHubIcon />
@@ -248,6 +261,7 @@ export default class AGSToolbar extends React.Component {
                     </Toolbar >
                     {this.renderProgress()}
                 </AppBar >
+                {this.renderHelpDialog()}
             </>
         )
     }
@@ -264,5 +278,29 @@ export default class AGSToolbar extends React.Component {
                 <ColorLinearProgress variant="determinate" value={percent} />
             </Tooltip>
         )
+    }
+
+    renderHelpDialog() {
+        return (
+            <Dialog
+                open={this.state.showHelp}
+                onClose={() => this.setState({ showHelp: false })}
+                aria-labelledby="help-dialog-title"
+                aria-describedby="help-dialog-description"
+            >
+                <DialogTitle id="help-dialog-title">{"AGS TRS Editor- Help"}</DialogTitle>
+                <DialogContent dividers id="help-dialog-description">
+                    <Typography gutterBottom>
+                        AGS TRS Editor helps edit trs file for translating AGS (Adventure Game Studio) games.
+                        Click the load button to load a trs file, make your edits and then click the save button to download it.
+                    </Typography>
+                    <Typography>
+                        - If you don't want to translate a line, just leave the following line blank.
+                    </Typography>
+                    <Typography>
+                        - Special characters such as [ and %%s symbolize things within the game, so should be left in an appropriate place in the message.
+                    </Typography>
+                </DialogContent>
+            </Dialog>)
     }
 }
