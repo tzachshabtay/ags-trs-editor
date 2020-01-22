@@ -64,7 +64,8 @@ class App extends React.Component {
     let index = 0;
     for (const line of lines) {
       if (line.startsWith("//")) {
-        comments = `${comments}\r\n${line}`;
+        if (!comments) comments = line;
+        else comments = `${comments}\r\n${line}`;
       } else if (from === null) {
         from = line;
       } else if (to === null) {
