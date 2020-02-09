@@ -51,7 +51,6 @@ export default class Line extends React.Component {
                 <TextField
                     label={from}
                     placeholder="Missing translation"
-                    multiline
                     margin="normal"
                     fullWidth
                     value={to}
