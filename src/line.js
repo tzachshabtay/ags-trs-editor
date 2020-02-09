@@ -42,6 +42,12 @@ export default class Line extends React.Component {
 
     render() {
         let from = trimStart(this.props.from);
+        let label = from;
+        let helperText = "";
+        if (from && from.length > 200) {
+            label = "";
+            helperText = from;
+        }
         let to = this.state.to ? trimStart(this.state.to) : "";
         return (<Grid container alignItems="center" direction="row" spacing={0} style={{ marginTop: 5 }}>
             <Grid item xs={1}>
@@ -49,7 +55,8 @@ export default class Line extends React.Component {
             </Grid>
             <Grid item xs={11}>
                 <TextField
-                    label={from}
+                    label={label}
+                    helperText={helperText}
                     placeholder="Missing translation"
                     margin="normal"
                     fullWidth
