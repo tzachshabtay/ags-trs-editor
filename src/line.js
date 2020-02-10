@@ -64,6 +64,7 @@ export default class Line extends React.Component {
                     onChange={this.onLineChanged}
                     onFocus={this.onFocus}
                     inputRef={input => { if (input) this.input = input; }}
+                    inputProps={{ spellCheck: true }}
                 />
             </Grid>
         </Grid>)
