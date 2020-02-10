@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "edb9cc2fb0f940584abd8a84ef89567c",
+    "revision": "67650a668e7b4b44e357d2aeaec5cd3f",
     "url": "/ags-trs-editor/index.html"
   },
   {
-    "revision": "d0cf824785a5acadb3c6",
+    "revision": "e469c86309a71f525334",
     "url": "/ags-trs-editor/static/css/main.d087c49a.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/ags-trs-editor/static/js/2.dcf2d48c.chunk.js.LICENSE"
   },
   {
-    "revision": "d0cf824785a5acadb3c6",
-    "url": "/ags-trs-editor/static/js/main.0d0f8506.chunk.js"
+    "revision": "e469c86309a71f525334",
+    "url": "/ags-trs-editor/static/js/main.d8722e5b.chunk.js"
   },
   {
     "revision": "dce435d8f9922a70b2a3",
