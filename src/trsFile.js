@@ -36,6 +36,8 @@ export default class File extends React.Component {
 
     onSearch = (text) => {
         if (!text) {
+            this.context.searchRealToVisual = null;
+            this.context.searchVisualToReal = null;
             this.setState({ search: null, searchText: "" });
         } else {
             const searchVisualToReal = {};
@@ -78,6 +80,9 @@ export default class File extends React.Component {
         if (to === undefined) {
             to = l.to;
         }
+        if (isVisible) {
+            this.context.lastRendered = index;
+        }
         return (
             <div key={key} style={style}>
                 <Line from={l.from} to={to} index={index}></Line>
@@ -85,4 +90,3 @@ export default class File extends React.Component {
         );
     }
 }
-

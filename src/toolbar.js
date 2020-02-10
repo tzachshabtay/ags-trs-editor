@@ -196,7 +196,15 @@ export default class AGSToolbar extends React.Component {
         this.setState({ searchValue: text });
         setTimeout(() => {
             if (this.state.searchValue === text) {
+                const lastRendered = this.context.lastRendered;
                 this.context.onSearch(text);
+                if (lastRendered) {
+                    const visualIndex = this.findVisibleVisualIndex(lastRendered);
+                    if (visualIndex !== 0 && !visualIndex) {
+                        return;
+                    }
+                    this.context.list.scrollToRow(visualIndex + 1);
+                }
             }
         }, 200);
     }
@@ -209,6 +217,16 @@ export default class AGSToolbar extends React.Component {
         this.setState({ showJumpToLine: true });
     }
 
+    findVisibleVisualIndex = (index) => {
+        if (!this.context.searchVisualToReal) {
+            return index;
+        }
+        while (!(index in this.context.searchRealToVisual) && index >= 0) {
+            index -= 1;
+        }
+        return this.context.searchRealToVisual[index];
+    }
+
     onJumpToLine = () => {
         let jumpLine = parseInt(this.state.jumpLine);
         if (jumpLine >= this.props.lines.length) {
@@ -219,13 +237,7 @@ export default class AGSToolbar extends React.Component {
             this.setState({ jumpLine });
         }
         const line = this.props.lines[jumpLine];
-        let visualIndex = jumpLine;
-        if (this.context.searchRealToVisual) {
-            while (!(jumpLine in this.context.searchRealToVisual) && jumpLine >= 0) {
-                jumpLine -= 1;
-            }
-            visualIndex = this.context.searchRealToVisual[jumpLine];
-        }
+        const visualIndex = this.findVisibleVisualIndex(jumpLine);
         if (visualIndex !== 0 && !visualIndex) {
             return;
         }
