@@ -41,8 +41,9 @@ export default class File extends React.Component {
             const searchVisualToReal = {};
             const searchRealToVisual = {};
             let mappingIndex = 0;
+            text = text.toLowerCase();
             for (const [index, line] of this.props.lines.entries()) {
-                if (line.from.includes(text) || this.getTo(line).includes(text)) {
+                if (line.from.toLowerCase().includes(text) || this.getTo(line).toLowerCase().includes(text)) {
                     searchVisualToReal[mappingIndex] = index;
                     searchRealToVisual[index] = mappingIndex;
                     mappingIndex += 1;
