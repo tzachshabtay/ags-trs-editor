@@ -22,8 +22,12 @@ import DialogActions from '@material-ui/core/DialogActions';
 import TextField from '@material-ui/core/TextField';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TelegramIcon from '@material-ui/icons/Telegram';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import { withStyles } from '@material-ui/core/styles';
 import { AppContext } from './context';
+
+//encodings taken from: https://github.com/whatwg/encoding/blob/main/encodings.json
+const encodings = require('./encodings.json');
 
 const ColorLinearProgress = withStyles({
     colorPrimary: {
@@ -34,13 +38,33 @@ const ColorLinearProgress = withStyles({
     },
 })(LinearProgress);
 
+const ColorSelect = withStyles({
+    inputRoot: {
+        color: "black",
+        backgroundColor: "white",
+        width: 200,
+        padding: 0,
+        margin: 0,
+    },
+})(Autocomplete);
 
 export default class AGSToolbar extends React.Component {
     static contextType = AppContext;
 
     constructor(props) {
         super(props);
+        this.encodings = this.parseEncodings();
         this.state = { searchValue: "", showHelp: false, showJumpToLine: false, jumpLine: 1 };
+    }
+
+    parseEncodings() {
+        const res = []
+        for (const group of encodings) {
+            for (const encoding of group.encodings) {
+                res.push(encoding.name)
+            }
+        }
+        return res
     }
 
     componentDidMount() {
@@ -181,7 +205,7 @@ export default class AGSToolbar extends React.Component {
     download = (text) => {
         //https://stackoverflow.com/questions/44656610/download-a-string-as-txt-file-in-react/44661948
         const element = document.createElement("a");
-        const file = new Blob([text], { type: 'text/plain' });
+        const file = new Blob([text], { type: `text/plain;charset=${this.props.encoding}` });
         element.href = URL.createObjectURL(file);
         element.download = "ags.trs";
         document.body.appendChild(element); // Required for this to work in FireFox
@@ -297,6 +321,18 @@ export default class AGSToolbar extends React.Component {
                         )}
                         {this.props.loading && (<CircularProgress />)}
                         <div style={{ flexGrow: 1 }} />
+                        <ColorSelect
+                            id="encoding-select"
+                            options={this.encodings}
+                            value={this.props.encoding}
+                            onChange={this.props.onEncodingChanged}
+                            getOptionLabel={(option) => option}
+                            style={{ width: 300 }}
+                            renderInput={(params) =>
+                                <TextField {...params} variant="outlined" size="small" />
+                            }
+                        >
+                        </ColorSelect>
                         {this.props.lines && (
                             <SearchBar value={this.state.searchValue} style={{ paddingLeft: 20 }}
                                 onChange={this.onSearch} onCancelSearch={() => this.onSearch("")} />)}

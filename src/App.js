@@ -17,14 +17,27 @@ class AppContainer extends React.Component {
 
 class App extends React.Component {
   static contextType = AppContext;
+
+  constructor(props) {
+    super(props);
+    this.state = { encoding: "UTF-8" };
+  }
+
   render() {
     return (
       <div className="App" style={{ height: "100%" }}>
-        <AGSToolbar lines={this.state && this.state.lines} comments={this.state && this.state.comments} upload={this.startUpload} loading={this.state && this.state.loading} />
+        <AGSToolbar lines={this.state && this.state.lines} comments={this.state && this.state.comments} upload={this.startUpload} loading={this.state && this.state.loading} encoding={this.state && this.state.encoding} onEncodingChanged={this.onEncodingChanged} />
         {this.state && this.state.lines && <File lines={this.state.lines} comments={this.state.comments} />}
         {(!this.state || !this.state.lines) && <Typography style={{ paddingTop: 100, paddingLeft: 50 }}>Please load a TRS file.</Typography>}
       </div>
     );
+  }
+
+  onEncodingChanged = (e, newValue) => {
+    if (!newValue) {
+      return
+    }
+    this.setState({ encoding: newValue }, () => this.parseFile(this.state.file))
   }
 
   startUpload = () => {
@@ -35,24 +48,30 @@ class App extends React.Component {
     //https://stackoverflow.com/questions/3582671/how-to-open-a-local-disk-file-with-javascript
     const readFile = function (e) {
       var file = e.target.files[0];
-      if (!file) {
-        return;
-      }
-      var reader = new FileReader();
-      reader.onload = function (e) {
-        var contents = e.target.result;
-        fileInput.func(contents)
-        document.body.removeChild(fileInput)
-      }
-      reader.readAsText(file)
+      fileInput.func(file)
+      document.body.removeChild(fileInput)
     }
     const fileInput = document.createElement("input")
     fileInput.type = 'file'
     fileInput.style.display = 'none'
     fileInput.onchange = readFile
-    fileInput.func = this.onUploaded
+    fileInput.func = this.parseFile
     document.body.appendChild(fileInput)
     fileInput.click()
+  }
+
+  parseFile = (file) => {
+    if (!file) {
+      return;
+    }
+    this.setState({ file })
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var contents = e.target.result;
+      reader.func(contents)
+    }
+    reader.func = this.onUploaded
+    reader.readAsText(file, this.state.encoding)
   }
 
   onUploaded = (contents) => {
